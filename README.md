@@ -9,7 +9,7 @@
 ### 动态库
 由于C++17 标准引入了结构化绑定和类模板推导，使编译器可以在某些情况下推断出成员变量的默认构造函数，有助于编译器更好地处理不可拷贝类型。故gcc版本需支持C++17方可编译成功，具体构建方法如下：
 
-```
+```shell
 cd dynamicLib
 make
 make install
@@ -28,7 +28,7 @@ make install
 ### 动态库
 任务建立方式：
 
-```
+```c
 class MyTask : public Task
 {
     public:
@@ -45,7 +45,7 @@ class MyTask : public Task
 
 任务添加及返回值获取：
 
-```
+```c
 ThreadPool pool;
 // 用户自己设置线程池的工作模式
 pool.setMode(PoolMode::MODE_CACHED);
@@ -58,8 +58,8 @@ int sum1 = res1.get().cast_<int>();
 ```
 
 ### Header-only
-向`submitTask`接口提交函数名即可：
-```
+向`submitTask`接口提交函数对象即可：
+```c
 ThreadPool pool;
 pool.setMode(PoolMode::MODE_CACHED);
 pool.start();
