@@ -38,9 +38,8 @@ public:
     // 启动线程
     void start()
     {
-        // 创建一个线程来执行一个线程函数 pthread_create
-        std::thread t(func_, threadId_); // C++11来说 线程对象t  和线程函数func_
-        t.detach();                      // 设置分离线程   pthread_detach  pthread_t设置成分离线程
+        std::thread t(func_, threadId_); 
+        t.detach();
     }
 
     // 获取线程id
@@ -115,7 +114,6 @@ public:
 
     // 给线程池提交任务
     // 使用可变参模板编程，让submitTask可以接收任意任务函数和任意数量的参数
-    // pool.submitTask(sum1, 10, 20);   csdn  大秦坑王  右值引用+引用折叠原理
     // 返回值future<>
     template <typename Func, typename... Args>
     auto submitTask(Func &&func, Args &&...args) -> std::future<decltype(func(args...))>
@@ -143,8 +141,6 @@ public:
         }
 
         // 如果有空余，把任务放入任务队列中
-        // taskQue_.emplace(sp);
-        // using Task = std::function<void()>;
         taskQue_.emplace([task]()
                          { (*task)(); });
         taskSize_++;
@@ -189,14 +185,12 @@ public:
             auto ptr = std::make_unique<Thread>(std::bind(&ThreadPool::threadFunc, this, std::placeholders::_1));
             int threadId = ptr->getId();
             threads_.emplace(threadId, std::move(ptr));
-            // threads_.emplace_back(std::move(ptr));
         }
 
-        // 启动所有线程  std::vector<Thread*> threads_;
         for (int i = 0; i < initThreadSize_; i++)
         {
-            threads_[i]->start(); // 需要去执行一个线程函数
-            idleThreadSize_++;    // 记录初始空闲线程的数量
+            threads_[i]->start();
+            idleThreadSize_++;
         }
     }
 
@@ -223,8 +217,6 @@ private:
                 // cached模式下，有可能已经创建了很多的线程，但是空闲时间超过60s，应该把多余的线程
                 // 结束回收掉（超过initThreadSize_数量的线程要进行回收）
                 // 当前时间 - 上一次线程执行的时间 > 60s
-
-                // 每一秒中返回一次   怎么区分：超时返回？还是有任务待执行返回
                 // 锁 + 双重判断
                 while (taskQue_.size() == 0)
                 {
@@ -250,9 +242,8 @@ private:
                             {
                                 // 开始回收当前线程
                                 // 记录线程数量的相关变量的值修改
-                                // 把线程对象从线程列表容器中删除   没有办法 threadFunc《=》thread对象
-                                // threadid => thread对象 => 删除
-                                threads_.erase(threadid); // std::this_thread::getid()
+                                // 把线程对象从线程列表容器中删除
+                                threads_.erase(threadid);
                                 curThreadSize_--;
                                 idleThreadSize_--;
 
@@ -285,9 +276,8 @@ private:
                     notEmpty_.notify_all();
                 }
 
-                // 取出一个任务，进行通知，通知可以继续提交生产任务
                 notFull_.notify_all();
-            } // 就应该把锁释放掉
+            }
 
             // 当前线程负责执行这个任务
             if (task != nullptr)
@@ -314,7 +304,6 @@ private:
     std::atomic_int curThreadSize_;  // 记录当前线程池里面线程的总数量
     std::atomic_int idleThreadSize_; // 记录空闲线程的数量
 
-    // Task任务 =》 函数对象
     using Task = std::function<void()>;
     std::queue<Task> taskQue_; // 任务队列
     std::atomic_int taskSize_; // 任务的数量

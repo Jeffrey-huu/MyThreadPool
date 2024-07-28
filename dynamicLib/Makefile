@@ -14,6 +14,7 @@ $(LIB_NAME): threadpool.cpp $(HEADER_NAME)
 # 测试编译
 test: test.cpp $(LIB_NAME)
 	$(CXX) test.cpp -o test.o -lthpool -lpthread
+	./test.o
 
 # 安装规则
 install: $(LIB_NAME)

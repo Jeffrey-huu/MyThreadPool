@@ -9,13 +9,7 @@ using namespace std;
 
 
 /*
-如何能让线程池提交任务更加方便
-1. pool.submitTask(sum1, 10, 20);
-   pool.submitTask(sum2, 1 ,2, 3);
-   submitTask:可变参模板编程
-
-2. 我们自己造了一个Result以及相关的类型，代码挺多
-    C++11 线程库   thread   packaged_task(function函数对象)  async 
+    让线程池提交任务更加方便
    使用future来代替Result节省线程池代码
 */
 
